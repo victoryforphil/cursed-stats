@@ -1,0 +1,26 @@
+{
+  "../data/subsystem/disk_metrics.csv": {
+    "path": "../data/subsystem/disk_metrics.csv",
+    "hash": "e7a372b10c406b08960da755de13c54c04582fd97c57b68eeff418f0c2e5904d",
+    "last_processed": "2025-04-08T03:50:21.761755Z",
+    "records_count": 100
+  },
+  "../data/cpu_metrics.csv": {
+    "path": "../data/cpu_metrics.csv",
+    "hash": "ef6ee4bed4b6bfe795409d93b5038eeb37520c2dec2be7ee92d674501439c100",
+    "last_processed": "2025-04-08T03:50:21.229440Z",
+    "records_count": 100
+  },
+  "../data/network_metrics.csv": {
+    "path": "../data/network_metrics.csv",
+    "hash": "5cc25f6fa8d2149614789d53a7cda8cd37df202691dd0d2bff17aa6010fb9f85",
+    "last_processed": "2025-04-08T03:50:21.372872Z",
+    "records_count": 100
+  },
+  "../data/memory_metrics.csv": {
+    "path": "../data/memory_metrics.csv",
+    "hash": "dfb0537efd28f073bb3ca07f40267ebbd5be8357944a8c0e1df83e1409dc6c86",
+    "last_processed": "2025-04-08T03:50:21.036109Z",
+    "records_count": 100
+  }
+}

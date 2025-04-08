@@ -1,0 +1,75 @@
+version: '3.8'
+
+networks:
+  cursed-stats-network:
+    driver: bridge
+
+services:
+  influxdb:
+    image: influxdb:1.8
+    container_name: cursed-stats-influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_DB=cursed_stats
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=admin
+      - INFLUXDB_USER=stats_user
+      - INFLUXDB_USER_PASSWORD=stats_password
+    volumes:
+      - cursed-stats-influxdb-data:/var/lib/influxdb
+    networks:
+      - cursed-stats-network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: cursed-stats-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    volumes:
+      - cursed-stats-grafana-data:/var/lib/grafana
+    networks:
+      - cursed-stats-network
+    depends_on:
+      - influxdb
+    restart: unless-stopped
+
+  importer:
+    build:
+      context: ./importer
+      dockerfile: Dockerfile
+      args:
+        - CACHEBUST=${CACHEBUST:-1}
+    image: cursed-stats-importer:latest
+    container_name: cursed-stats-importer
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_DB=cursed_stats
+      - INFLUXDB_USER=stats_user
+      - INFLUXDB_PASSWORD=stats_password
+      - SCAN_DIR=${SCAN_DIR:-/data}
+      - MEASUREMENT=${MEASUREMENT:-stats}
+      - SCANNER_THREADS=${SCANNER_THREADS:-2}
+      - PARSER_THREADS=${PARSER_THREADS:-4}
+      - DB_THREADS=${DB_THREADS:-4}
+      - BUFFER_SIZE=${BUFFER_SIZE:-100000}
+      - CACHE_FILE=${CACHE_FILE:-/app/.import_cache.json}
+      - LOG_FILE=${LOG_FILE:-/app/importer.log}
+    volumes:
+      - ${CSV_INPUT_DIR:-./data}:/data
+    networks:
+      - cursed-stats-network
+    depends_on:
+      - influxdb
+    restart: unless-stopped
+
+volumes:
+  cursed-stats-influxdb-data:
+  cursed-stats-grafana-data:
